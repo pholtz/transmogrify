@@ -4,7 +4,7 @@ from textual.widgets import Placeholder
 from textual.reactive import Reactive
 from textual.views import GridView
 from textual.widget import Widget
-from textual.widgets import Button, ButtonPressed
+from textual.widgets import Button, ButtonPressed, Footer
 from rich.align import Align
 from rich.console import Console, ConsoleOptions, RenderResult, RenderableType
 from rich.padding import Padding
@@ -16,6 +16,7 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich.style import Style
 from rich.syntax import Syntax
+from rich.text import Text
 import os
 
 
@@ -60,7 +61,7 @@ class Reader(Widget):
         return Align.center(table, vertical="middle")
     
     def preview(self) -> RenderableType:
-        return Syntax("\n".join(self.file_contents), "text", theme="monokai", line_numbers=True)
+        return Syntax("".join(self.file_contents), "text", theme="monokai", line_numbers=True)
     
     def load_preview(self):
         with open(self.selected_filename, "r") as selected_file:
@@ -116,6 +117,7 @@ class Application(App):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.window = Window()
+        self.footer = Footer()
 
     async def on_load(self, event):
         await self.bind("q", "quit")
@@ -124,8 +126,9 @@ class Application(App):
         await self.bind("enter", "keypress_enter", "enter")
 
     async def on_mount(self, event: events.Mount) -> None:
-        """Mount the calculator widget."""
+        """Mount the main window and footer."""
         await self.view.dock(self.window)
+        await self.view.dock(self.footer, edge="bottom")
     
     async def action_keypress_up(self):
         self.log(f"User pressed the up key (action_keypress)")
