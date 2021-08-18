@@ -1,41 +1,83 @@
 package org.driftwood.panel;
 
 import java.awt.BorderLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 public class BasePanel extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private final JTextArea text;
-	private final JScrollPane textScroll;
+	private Mode mode;
 	private final ReaderPanel readerPanel;
+	private final ProcessorPanel processorPanel;
+	private final WriterPanel writerPanel;
+	private final JButton nextButton;
+	private final JPanel buttonPanel;
 	
 	public BasePanel() {
 		super(new BorderLayout());
 		
-		this.text = new JTextArea(5, 20);
-		this.text.setMargin(new Insets(5, 5, 5, 5));
-		this.text.setEditable(false);
-		this.textScroll = new JScrollPane(this.text);
-		this.appendText("Initialized!");
-		
 		this.readerPanel = new ReaderPanel();
-//		super.add(this.textScroll);
-		super.add(this.readerPanel);
+		this.processorPanel = new ProcessorPanel();
+		this.writerPanel = new WriterPanel();
 		
+		this.nextButton = new JButton("Next");
+		this.nextButton.addActionListener(this);
+		this.buttonPanel = new JPanel(new BorderLayout());
+		this.buttonPanel.add(this.nextButton, BorderLayout.EAST);
+		
+		this.mode = Mode.READ;
+		this.add(this.readerPanel, BorderLayout.CENTER);
+		this.add(this.buttonPanel, BorderLayout.SOUTH);
 	}
-	
+
+	@Override
 	public void actionPerformed(ActionEvent event) {
-		this.appendText(event.toString());
+		if(event.getSource() == this.nextButton) {
+			if(this.mode == Mode.READ) {
+				this.mode = Mode.PROCESS;
+				super.remove(this.readerPanel);
+				super.add(this.processorPanel);
+				super.revalidate();
+			} else if(this.mode == Mode.PROCESS) {
+				this.mode = Mode.WRITE;
+				super.remove(this.processorPanel);
+				super.add(this.writerPanel);
+				super.revalidate();
+			}
+		}
 	}
 	
-	private void appendText(String text) {
-		this.text.append(text + "\n");
+	public void refresh() {
+		switch(this.mode) {
+			case READ:
+			default:
+				super.add(this.readerPanel);
+				super.remove(this.processorPanel);
+				super.remove(this.writerPanel);
+				break;
+			case PROCESS:
+				super.remove(this.readerPanel);
+				super.add(this.processorPanel);
+				super.remove(this.writerPanel);
+				break;
+			case WRITE:
+				super.remove(this.readerPanel);
+				super.remove(this.processorPanel);
+				super.add(this.writerPanel);
+				break;
+		}
+	}
+	
+	public void changeMode(Mode mode) {
+		this.mode = mode;
+		this.refresh();
+	}
+	
+	public static enum Mode {
+		READ, PROCESS, WRITE;
 	}
 }
