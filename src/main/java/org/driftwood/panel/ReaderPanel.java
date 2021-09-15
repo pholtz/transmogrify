@@ -12,10 +12,12 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
@@ -28,6 +30,10 @@ public class ReaderPanel extends JPanel implements ActionListener {
 	private final JFileChooser fileChooser;
 	private final JTextArea previewText;
 	private final JScrollPane previewTextScroll;
+	private final JRadioButton parserDelimiterButton;
+	private final JRadioButton parserRegexButton;
+	private final JRadioButton parserNoneButton;
+	private final ButtonGroup parserButtonGroup;
 
 	public ReaderPanel() {
 		super(new GridBagLayout());
@@ -46,6 +52,14 @@ public class ReaderPanel extends JPanel implements ActionListener {
 		this.previewText.setEditable(false);
 		this.previewTextScroll = new JScrollPane(this.previewText);
 		this.previewTextScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		this.parserDelimiterButton = new JRadioButton("Delimited");
+		this.parserRegexButton = new JRadioButton("Regular Expression");
+		this.parserNoneButton = new JRadioButton("None");
+		this.parserButtonGroup = new ButtonGroup();
+		this.parserButtonGroup.add(this.parserDelimiterButton);
+		this.parserButtonGroup.add(this.parserRegexButton);
+		this.parserButtonGroup.add(this.parserNoneButton);
 		
 		GridBagConstraints titleLayout = new GridBagConstraints();
 		titleLayout.fill = GridBagConstraints.HORIZONTAL;
@@ -78,14 +92,16 @@ public class ReaderPanel extends JPanel implements ActionListener {
 		previewTextLayout.fill = GridBagConstraints.BOTH;
 		previewTextLayout.gridx = 0;
 		previewTextLayout.gridy = 2;
-		previewTextLayout.weightx = 1;
-		previewTextLayout.weighty = 1;
-		previewTextLayout.ipadx = 80;
+		previewTextLayout.weightx = 0;
+		previewTextLayout.weighty = 0;
+		previewTextLayout.ipadx = 40;
 		previewTextLayout.ipady = 10;
 		previewTextLayout.gridwidth = 3;
 		previewTextLayout.gridheight = 1;
 		previewTextLayout.insets = new Insets(10, 10, 10, 10);
 		super.add(this.previewTextScroll, previewTextLayout);
+		
+		super.revalidate();
 	}
 
 	public void actionPerformed(ActionEvent event) {
@@ -105,6 +121,49 @@ public class ReaderPanel extends JPanel implements ActionListener {
 				}
 			}
 		}
+	}
+	
+	public void loadParserInterface() {
+		GridBagConstraints parserDelimiterLayout = new GridBagConstraints();
+		parserDelimiterLayout.fill = GridBagConstraints.BOTH;
+		parserDelimiterLayout.gridx = 0;
+		parserDelimiterLayout.gridy = 3;
+		parserDelimiterLayout.weightx = 1;
+		parserDelimiterLayout.weighty = 1;
+		parserDelimiterLayout.ipadx = 20;
+		parserDelimiterLayout.ipady = 10;
+		parserDelimiterLayout.gridwidth = 1;
+		parserDelimiterLayout.gridheight = 1;
+		parserDelimiterLayout.insets = new Insets(10, 10, 10, 10);
+		super.add(this.parserDelimiterButton, parserDelimiterLayout);
+		
+		GridBagConstraints parserRegexLayout = new GridBagConstraints();
+		parserRegexLayout.fill = GridBagConstraints.BOTH;
+		parserRegexLayout.gridx = 0;
+		parserRegexLayout.gridy = 3;
+		parserRegexLayout.weightx = 1;
+		parserRegexLayout.weighty = 1;
+		parserRegexLayout.ipadx = 20;
+		parserRegexLayout.ipady = 10;
+		parserRegexLayout.gridwidth = 1;
+		parserRegexLayout.gridheight = 1;
+		parserRegexLayout.insets = new Insets(10, 10, 10, 10);
+		super.add(this.parserRegexButton, parserRegexLayout);
+		
+		GridBagConstraints parserNoneLayout = new GridBagConstraints();
+		parserNoneLayout.fill = GridBagConstraints.BOTH;
+		parserNoneLayout.gridx = 0;
+		parserNoneLayout.gridy = 3;
+		parserNoneLayout.weightx = 1;
+		parserNoneLayout.weighty = 1;
+		parserNoneLayout.ipadx = 20;
+		parserNoneLayout.ipady = 10;
+		parserNoneLayout.gridwidth = 1;
+		parserNoneLayout.gridheight = 1;
+		parserNoneLayout.insets = new Insets(10, 10, 10, 10);
+		super.add(this.parserNoneButton, parserNoneLayout);
+		
+		super.revalidate();
 	}
 
 	private void appendText(String text) {

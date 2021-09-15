@@ -14,6 +14,7 @@ public class BasePanel extends JPanel implements ActionListener {
 	private final ReaderPanel readerPanel;
 	private final ProcessorPanel processorPanel;
 	private final WriterPanel writerPanel;
+	private final JButton previousButton;
 	private final JButton nextButton;
 	private final JPanel buttonPanel;
 	
@@ -24,9 +25,12 @@ public class BasePanel extends JPanel implements ActionListener {
 		this.processorPanel = new ProcessorPanel();
 		this.writerPanel = new WriterPanel();
 		
+		this.previousButton = new JButton("Previous");
+		this.previousButton.addActionListener(this);
 		this.nextButton = new JButton("Next");
 		this.nextButton.addActionListener(this);
 		this.buttonPanel = new JPanel(new BorderLayout());
+		this.buttonPanel.add(this.previousButton, BorderLayout.WEST);
 		this.buttonPanel.add(this.nextButton, BorderLayout.EAST);
 		
 		this.mode = Mode.READ;
@@ -36,6 +40,20 @@ public class BasePanel extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		if(event.getSource() == this.previousButton) {
+			if(this.mode == Mode.PROCESS) {
+				this.mode = Mode.READ;
+				super.remove(this.processorPanel);
+				super.add(this.readerPanel);
+				super.revalidate();
+			} else if(this.mode == Mode.WRITE) {
+				this.mode = Mode.PROCESS;
+				super.remove(this.writerPanel);
+				super.add(this.processorPanel);
+				super.revalidate();
+			}
+		}
+		
 		if(event.getSource() == this.nextButton) {
 			if(this.mode == Mode.READ) {
 				this.mode = Mode.PROCESS;
